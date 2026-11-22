@@ -1,10 +1,13 @@
 #include "../include/vga.h"
 #include "../include/terminal.h"
+#include "../include/color.h"
+#include "../include/io.h"
 
 size_t terminal_row;
 size_t terminal_column;
 uint8_t terminal_color;
 uint16_t* terminal_buffer = (uint16_t*)VGA_MEMORY;
+uint16_t* addr_cursor = (uint16_t*)CURSOR;
 
 void terminal_initialize(void)
 {
@@ -31,21 +34,54 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y)
 	terminal_buffer[index] = vga_entry(c, color);
 }
 
+void terminal_Scrolling()
+{
+	terminal_row = VGA_WIDTH - 1;
+	for (size_t y = 0; (y + 1) < VGA_HEIGHT; y++){
+		for (size_t x = 0; x < VGA_WIDTH; x++){
+		const size_t index = y * VGA_WIDTH + x;
+		const size_t index_bis = (y + 1) * VGA_WIDTH + x;
+		terminal_buffer[index] = terminal_buffer[index_bis];
+		}
+	}
+	for (size_t x = 0; x < VGA_WIDTH; x++){
+		const size_t index = (VGA_HEIGHT - 1) * VGA_WIDTH + x;
+		terminal_buffer[index] = vga_entry(' ', terminal_color);
+	}
+}
+
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end)
+{
+	outb(0x3D4, 0x0A);
+	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
+
+	outb(0x3D4, 0x0B);
+	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
+}
+
+void disable_cursor()
+{
+	outb(0x3D4, 0x0A);
+	outb(0x3D5, 0x20);
+}
+
 void terminal_putchar(char c) 
 {
+	if (color_terminal(&terminal_color, c) == true)
+		return;
 	if (c != 0x0A)
 		terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
 	else
 	{
 		terminal_column = 0;
 		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+			terminal_Scrolling();
 		return;
 	}
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
 		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
+			terminal_Scrolling();
 	}
 }
 

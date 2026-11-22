@@ -6,7 +6,7 @@ DIR_SRC= src/
 DIR_OBJ= obj/
 
 CODE_KERNEL= kernel/kernel.c
-CODE_TERMINAL= drivers/terminal.c
+CODE_TERMINAL= drivers/terminal.c drivers/color.c
 CODE_BOOT= boot/boot.s
 
 SRCK= $(addprefix $(DIR_SRC),$(CODE_KERNEL))
@@ -23,8 +23,9 @@ AS= i686-elf-as
 ASFLAGS= --32
 
 CC= i686-elf-gcc
-CFLAGS= -Wall -Wextra -Werror -I include -m32 -mtune=i386 -fno-builtin -ffreestanding -fno-exceptions
-CFLAGS+= -fno-stack-protector -nostdlib -nodefaultlibs -fno-pie -fno-pic -O2
+CFLAGS= -Wall -Wextra -Werror -I include -m32 -mtune=i386 -O2 -mavx2 -ftree-vectorize -mmovbe
+CFLAGS+= -fno-builtin -ffreestanding -fno-exceptions
+CFLAGS+= -fno-stack-protector -nostdlib -nodefaultlibs -fno-pie -fno-pic
 
 LD= i686-elf-ld
 LDFLAGS= -m elf_i386 --no-pie --gc-sections -T $(LDSCRIPT) --build-id=none

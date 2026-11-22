@@ -1,9 +1,11 @@
 /* The bootloader will look at this image and start execution at the symbol
    designated as the entry point. */
+
 ENTRY(_start)
 
 /* Tell where the various sections of the object files will be put in the final
    kernel image. */
+
 SECTIONS
 {
 	/* It used to be universally recommended to use 1M as a start offset,
@@ -17,6 +19,7 @@ SECTIONS
 	   memory which is verified to be available by the firmware, in order to
 	   work around this issue. This does not use that feature, so 2M was
 	   chosen as a safer option than the traditional 1M. */
+
 	. = 2M;
 
 	/* First put the multiboot header, as it is required to be put very early
@@ -47,6 +50,4 @@ SECTIONS
 		*(.bss)
 	}
 
-	/* The compiler may produce other sections, by default it will put them in
-	   a segment with the same name. Simply add stuff here as needed. */
 }

@@ -1,6 +1,5 @@
-#include <stdbool.h>
-#include <stddef.h>
-#include <stdint-gcc.h>
+#include "../include/terminal.h"
+
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -12,105 +11,16 @@
 	#error "This tutorial needs to be compiled with a ix86-elf compiler"
 #endif
 
-/* Hardware text mode color constants. */
-enum vga_color {
-	VGA_COLOR_BLACK = 0,
-	VGA_COLOR_BLUE = 1,
-	VGA_COLOR_GREEN = 2,
-	VGA_COLOR_CYAN = 3,
-	VGA_COLOR_RED = 4,
-	VGA_COLOR_MAGENTA = 5,
-	VGA_COLOR_BROWN = 6,
-	VGA_COLOR_LIGHT_GREY = 7,
-	VGA_COLOR_DARK_GREY = 8,
-	VGA_COLOR_LIGHT_BLUE = 9,
-	VGA_COLOR_LIGHT_GREEN = 10,
-	VGA_COLOR_LIGHT_CYAN = 11,
-	VGA_COLOR_LIGHT_RED = 12,
-	VGA_COLOR_LIGHT_MAGENTA = 13,
-	VGA_COLOR_LIGHT_BROWN = 14,
-	VGA_COLOR_WHITE = 15,
-};
-
-static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) 
-{
-	return fg | bg << 4;
-}
-
-static inline uint16_t vga_entry(unsigned char uc, uint8_t color) 
-{
-	return (uint16_t) uc | (uint16_t) color << 8;
-}
-
-size_t strlen(const char* str) 
-{
-	size_t len = 0;
-	while (str[len])
-		len++;
-	return len;
-}
-
-#define VGA_WIDTH   80
-#define VGA_HEIGHT  25
-#define VGA_MEMORY  0xB8000 
-
-size_t terminal_row;
-size_t terminal_column;
-uint8_t terminal_color;
-uint16_t* terminal_buffer = (uint16_t*)VGA_MEMORY;
-
-void terminal_initialize(void) 
-{
-	terminal_row = 0;
-	terminal_column = 0;
-	terminal_color = vga_entry_color(VGA_COLOR_LIGHT_GREY, VGA_COLOR_BLACK);
-	
-	for (size_t y = 0; y < VGA_HEIGHT; y++) {
-		for (size_t x = 0; x < VGA_WIDTH; x++) {
-			const size_t index = y * VGA_WIDTH + x;
-			terminal_buffer[index] = vga_entry(' ', terminal_color);
-		}
-	}
-}
-
-void terminal_setcolor(uint8_t color) 
-{
-	terminal_color = color;
-}
-
-void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) 
-{
-	const size_t index = y * VGA_WIDTH + x;
-	terminal_buffer[index] = vga_entry(c, color);
-}
-
-void terminal_putchar(char c) 
-{
-	terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
-		terminal_column = 0;
-		if (++terminal_row == VGA_HEIGHT)
-			terminal_row = 0;
-	}
-}
-
-void terminal_write(const char* data, size_t size) 
-{
-	for (size_t i = 0; i < size; i++)
-		terminal_putchar(data[i]);
-}
-
-void terminal_writestring(const char* data) 
-{
-	terminal_write(data, strlen(data));
-}
-
 void kernel_main(void) 
 {
 	/* Initialize terminal interface */
 	terminal_initialize();
 
 	/* Newline support is left as an exercise. */
-	terminal_writestring("Hello, kernel World!\n");
+	terminal_writestring("Hello, kernel World!\nNew line is done");
+	terminal_writestring("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus varius diam a mi iaculis laoreet. Maecenas libero dolor, pretium eu pharetra ut, scelerisque non sapien. Suspendisse purus sapien, consequat vel viverra sit amet, faucibus eget leo. Integer volutpat turpis ante, eget egestas urna sodales a. Sed condimentum eros urna, in vestibulum diam imperdiet sit amet. Proin vehicula commodo metus eget placerat. Integer ac ante et nunc vulputate ultrices. Morbi eget metus arcu. Aliquam erat volutpat. Nunc euismod tortor ante, eget blandit tellus posuere eget. " \
+	" Sed interdum erat vitae risus tempus, nec facilisis enim faucibus. Nunc interdum arcu lectus, et posuere dui pharetra et. Maecenas non sapien mollis, tristique felis in, vestibulum dui. Ut eu quam pharetra, auctor odio et, gravida metus. Aliquam tincidunt consequat varius. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse potenti. Fusce nec urna pulvinar, consectetur nulla quis, consectetur odio. Morbi congue diam ac dolor dignissim elementum. Vestibulum sed mattis quam. Aliquam ac nulla tellus. Integer massa ligula, feugiat quis odio in, ornare finibus nisl. Mauris consectetur accumsan ante condimentum tristique." \
+	"Nulla laoreet nisl enim, nec mollis ex gravida vitae. Curabitur et nulla velit. Aenean at erat sed leo imperdiet elementum. Mauris euismod, leo vel accumsan facilisis, leo lorem convallis turpis, a tempor erat ante eu mauris. Proin feugiat lacus eu condimentum finibus. Cras id sapien sed tellus hendrerit commodo. Quisque id metus in orci fringilla sollicitudin. Sed mollis quam at sodales ornare. Pellentesque commodo sapien feugiat nisl lobortis posuere. Vestibulum vitae diam nisi. Cras eleifend sem eu imperdiet semper. Mauris semper vitae enim a vulputate. Vivamus quis nisi semper, bibendum arcu sit amet, cursus orci." \
+	"Quisque vel interdum magna. In gravida lectus lectus, vel lacinia felis eleifend ac. Sed eget libero arcu. Donec quis urna vel lacus egestas pharetra ut at sem.");
 	while (1);
 }

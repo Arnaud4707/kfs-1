@@ -3,36 +3,48 @@ KERNEL= iso/boot/$(NAME)
 ISO= $(NAME).iso
 
 DIR_SRC= src/
-
-CCODE= kernel/kernel.c
-SCODE= boot/boot.s
 DIR_OBJ= obj/
-OBJ= $(addprefix  $(DIR_OBJ), $(CCODE:.c=.o))
-OBJ+= $(addprefix  $(DIR_OBJ), $(SCODE:.s=.o))
+
+CODE_KERNEL= kernel/kernel.c
+CODE_TERMINAL= drivers/terminal.c
+CODE_BOOT= boot/boot.s
+
+SRCK= $(addprefix $(DIR_SRC),$(CODE_KERNEL))
+SRCT= $(addprefix $(DIR_SRC),$(CODE_TERMINAL))
+SRCB= $(addprefix $(DIR_SRC),$(CODE_BOOT))
+
+OBJ= $(patsubst $(DIR_SRC)%.c,$(DIR_OBJ)%.o,$(SRCK))
+OBJ+= $(patsubst $(DIR_SRC)%.c,$(DIR_OBJ)%.o,$(SRCT))
+OBJ+= $(patsubst $(DIR_SRC)%.s,$(DIR_OBJ)%.o,$(SRCB))
+
 LDSCRIPT= linker.ld
 
 AS= i686-elf-as
-ASFLAGS= -- 32
+ASFLAGS= --32
 
 CC= i686-elf-gcc
-CFLAGS= -Wall -Wextra -Werror -m32 -mtune=i386 -fno-builtin -fno-exceptions -fno-stack-protector
-CFLAGS+= -nostdlib -nodefaultlibs -fno-pie -fno-pic -O2
+CFLAGS= -Wall -Wextra -Werror -I include -m32 -mtune=i386 -fno-builtin -ffreestanding -fno-exceptions
+CFLAGS+= -fno-stack-protector -nostdlib -nodefaultlibs -fno-pie -fno-pic -O2
 
 LD= i686-elf-ld
 LDFLAGS= -m elf_i386 --no-pie --gc-sections -T $(LDSCRIPT) --build-id=none
 
-$(DIR_OBJ)%.o: %.s
+$(DIR_OBJ)boot/%.o: $(DIR_SRC)boot/%.s
 	mkdir -p $(dir $@)
-	$(AS) -c $< -o $@
+	$(AS) $(ASFLAGS) -c $< -o $@
 
-$(DIR_OBJ)%.o: %.c 
+$(DIR_OBJ)kernel/%.o: $(DIR_SRC)kernel/%.c 
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(DIR_OBJ)drivers/%.o: $(DIR_SRC)drivers/%.c 
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 all: $(ISO)
 
-$(KERNEL): $(OBJ) $(LDFLAGS)
-	mkdir -p iso/boot/
+$(KERNEL): $(OBJ) $(LDSCRIPT)
+	mkdir -p $(dir $@)
 	$(LD) $(LDFLAGS) -o $(KERNEL) $(OBJ)
 
 $(ISO): $(KERNEL)

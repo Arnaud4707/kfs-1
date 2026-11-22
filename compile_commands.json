@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "arguments": [
+      "/home/amugisha/cross/bin/i686-elf-gcc",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-m32",
+      "-mtune=i386",
+      "-fno-builtin",
+      "-ffreestanding",
+      "-fno-exceptions",
+      "-fno-stack-protector",
+      "-fno-pie",
+      "-fno-pic",
+      "-O2",
+      "-c",
+      "-o",
+      "obj/kernel/kernel.o",
+      "src/kernel/kernel.c"
+    ],
+    "directory": "/home/amugisha/kfs",
+    "file": "/home/amugisha/kfs/src/kernel/kernel.c",
+    "output": "/home/amugisha/kfs/obj/kernel/kernel.o"
+  }
+]

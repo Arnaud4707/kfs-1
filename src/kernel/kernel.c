@@ -1,4 +1,6 @@
 #include "../include/terminal.h"
+#include "../include/color.h"
+
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -16,9 +18,9 @@ void kernel_main(void)
 	terminal_initialize();
 
 	/* Newline support is left as an exercise. */
-	terminal_writestring("\033[1mHello\033[0m, \033[15mkernel\033[0m \033[4mWorld\033[0m!\nNew \033[13mline is\033[0m done\n");
-	terminal_writestring("\033[10mLorem ipsum dolor sit amet\033[0m, \nconsectetur adipiscing elit.");
-	// enable_cursor(13 , 15);
+	terminal_writestring(BLUE"Hello"ENDCOLOR", "WHITE"kernel"ENDCOLOR" "RED"World"ENDCOLOR"!\nNew "LIGHT_MAGENTA"line is"ENDCOLOR" done\n");
+	terminal_writestring(LIGHT_GREEN"Lorem ipsum dolor sit amet"ENDCOLOR", \nconsectetur adipiscing elit.");
+	enable_cursor(0 , 15);
 	// disable_cursor();
 	while (1);
 }

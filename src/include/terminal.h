@@ -16,6 +16,7 @@ extern    uint16_t* addr_cursor;
 void terminal_initialize(void);
 void terminal_writestring(const char* data);
 void enable_cursor(uint8_t cursor_start, uint8_t cursor_end);
+
 void disable_cursor();
 
 

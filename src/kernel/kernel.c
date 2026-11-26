@@ -1,6 +1,6 @@
 #include "../include/terminal.h"
 #include "../include/color.h"
-
+#include "../include/keyboard.h"
 
 /* Check if the compiler thinks you are targeting the wrong operating system. */
 #if defined(__linux__)
@@ -20,7 +20,16 @@ void kernel_main(void)
 	/* Newline support is left as an exercise. */
 	terminal_writestring(BLUE"Hello"ENDCOLOR", "WHITE"kernel"ENDCOLOR" "RED"World"ENDCOLOR"!\nNew "LIGHT_MAGENTA"line is"ENDCOLOR" done\n");
 	terminal_writestring(LIGHT_GREEN"Lorem ipsum dolor sit amet"ENDCOLOR", \nconsectetur adipiscing elit.");
-	enable_cursor(0 , 15);
+	enable_cursor(13 , 15);
 	// disable_cursor();
-	while (1);
+	uint8_t data = 0;
+	// ps2_wait_write();
+	// ps2_write_data(0xF2);// FA AB 41
+	while (1)
+	{
+		ps2_wait_read();
+		data = ps2_read_data();
+		// print_hex(data);
+		keyboard(data);
+	};
 }

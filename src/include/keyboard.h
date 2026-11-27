@@ -86,6 +86,14 @@
 #define KEY_0_RELEASED	0x8B
 
 // control key left
+#define KEY_ESCAPE_PRESSED	0x01
+#define KEY_ESCAPE_RELEASED	0x81
+#define KEY_2S_PRESSED		0x29
+#define KEY_2S_RELEASED		0xA9
+#define KEY_LOCKSHIFT_PRESSED		0x3A
+#define KEY_LOCKSHIFT_RELEASED		0xBA
+#define KEY_WINDOWS_PRESSED		0x5B
+#define KEY_WINDOWS_RELEASED	0xDB
 #define KEY_TAB_PRESSED		0x0F
 #define KEY_TAB_RELEASED	0x8F
 #define KEY_LSHIFT_PRESSED	0x2A
@@ -100,6 +108,8 @@
 #define KEY_BACK_RELEASED	0x8E
 #define KEY_ENTER_PRESSED	0x1C
 #define KEY_ENTER_RELEASED	0x9C
+#define KEY_RSHIFT_PRESSED	0x36
+#define KEY_RSHIFT_RELEASED	0xB6
 #define KEY_SPACE_PRESSED	0x39
 #define KEY_SPACE_RELEASED	0xB9
 #define KEY_ALTGR_PRESSED	0x38
@@ -115,18 +125,60 @@
 #define KEY_RIGHT_PRESSED	0x4D
 #define KEY_RIGHT_RELEASED	0xCD
 
+// Special character
+#define KEY_SPECIAL01_PRESSED	0x29
+#define KEY_SPECIAL01_RELEASED	0xA9
+#define KEY_SPECIAL02_PRESSED	0x0C
+#define KEY_SPECIAL02_RELEASED	0x8C
+#define KEY_SPECIAL03_PRESSED	0x0D
+#define KEY_SPECIAL03_RELEASED	0x8D
+#define KEY_SPECIAL04_PRESSED	0x1A
+#define KEY_SPECIAL04_RELEASED	0x9A
+#define KEY_SPECIAL05_PRESSED	0x1B
+#define KEY_SPECIAL05_RELEASED	0x9B
+#define KEY_SPECIAL06_PRESSED	0x2B
+#define KEY_SPECIAL06_RELEASED	0xAB
+#define KEY_SPECIAL07_PRESSED	0x28
+#define KEY_SPECIAL07_RELEASED	0xB8
+#define KEY_SPECIAL08_PRESSED	0x32
+#define KEY_SPECIAL08_RELEASED	0xB2
+#define KEY_SPECIAL09_PRESSED	0x33
+#define KEY_SPECIAL09_RELEASED	0xB3
+#define KEY_SPECIAL10_PRESSED	0x34
+#define KEY_SPECIAL10_RELEASED	0xB4
+#define KEY_SPECIAL11_PRESSED	0x35
+#define KEY_SPECIAL11_RELEASED	0xB5
+#define KEY_SPECIAL12_PRESSED	0x56
+#define KEY_SPECIAL12_RELEASED	0xD6
+
 /*
 	@struct		Status Register Control Key
 
 	@brief		Register of key'status, 3 bits describ there status.
 				
-	@param		bit 0: shift control, if 0 lowercase character, if 1 uppercase character.
+	@param		bit 0: lshift control, if 0 lowercase character, if 1 uppercase character.
 				
 	@param		bit 1: crtl control, if 0 ctrl disable, if 1 enable.
 				
 	@param		bit 2: alt gr control, if 0 alt gr disable, if 1 enable.
+
+	@param		bit 3: lock shift control, if 0 lock shift disable, if 1 enable.
+
+	@param		bit 4: fn control, if 0 fn disable, if 1 enable.
+
+	@param		bit 5: windows control, if 0 windows disable, if 1 enable.
+
+	@param		bit 6: rshift control, if 0 lowercase disable, if 1 enable.
 */
-extern uint8_t STATUS_KEY;	
+extern uint8_t STATUS_KEY;
+
+#define BLSHIFT	0
+#define BCRTL	1
+#define BALTGR	2
+#define BLOCKSHIFT	3
+#define BFN	4
+#define BWINDOWS	5
+#define BRSHIFT	6
 
 /*
 	@struct		Marco KEY_PRESS()
